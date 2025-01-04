@@ -1,0 +1,39 @@
+{
+    "products": [
+        {
+            "id": 1,
+            "image": "image1.png",
+            "price": 480000,
+            "name": "Lenovo Thinkpad T480",
+            "brand": "Lenovo",
+            "buy_product": "/product/{id}"
+        },
+        {
+            "id": 1,
+            "image": "image2.png",
+            "price": 490000,
+            "name": "Toshiba T480",
+            "brand": "Toshiba",
+            "buy_product": "/product/{id}"
+        }
+    ]
+}
+
+{
+    "buy_product": {
+    "id": 1,
+    "image": "image1.png",
+    "price": 480000,
+    "name": "Lenovo Thinkpad T480",
+    "brand": "Lenovo",
+    "buy_product": "/product/{id}",
+    "description": "lorem ipsum lorem ipsumlorem ipsumlorem ipsum",
+    "quantity": 7
+    }
+}
+
+
+
+
+
+
