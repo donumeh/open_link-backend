@@ -4,19 +4,37 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
 
-
 router.get(`/`, async (req, res) => {
-    let filter = {}
-    if (req.query.brand) {
-        filter = { brand: req.query.brand.split(",") }
-    }
-    const products = await Product.find(filter).populate('brand');
+    let page_filter = 0;
+    let products;
+    let itemsPerPage = 12;
+    let totalPages = 0
 
-    if (!products) {
-        res.status(500).json({ success: false })
+    if (req.query.page) {
+        page_filter = parseInt(req.query.page, 12) || 0;
     }
 
-    res.json({ success: "ok", statusCode: 200, products })
+    try {
+
+        const totalProducts = await Product.countDocuments();
+
+        totalPages = Math.ceil(totalProducts / itemsPerPage);
+
+        products = await Product.find()
+            .populate('brand')
+            .skip(page_filter * itemsPerPage)
+            .limit(itemsPerPage)
+
+        res.status(200).json({
+            products,
+            totalPages: totalPages = totalPages - 1,
+            currentPage: page_filter,
+        })
+    }
+    catch (err) {
+        console.log(err.message)
+        res.status(500).json({ message: "An error occurred while fetching products", success: false })
+    }
 })
 
 router.get('/:id', async (req, res) => {
