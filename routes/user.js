@@ -26,41 +26,52 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post(`/`, async (req, res) => {
-    if (!req.body.name || !req.body.email || !req.body.password) {
-        return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
-    }
-    let user = new User({
-        passwordHash: bcrypt.hashSync(req.body.password, 10),
-        ...req.body
-    });
 
-    user = await user.save();
+    try {
 
-    if (!user) {
-        return res.status(404).send("user couldn't be created")
+        if (!req.body.name || !req.body.email || !req.body.password) {
+            return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
+        }
+        let user = new User({
+            passwordHash: bcrypt.hashSync(req.body.password, 10),
+            ...req.body
+        });
+
+        user = await user.save();
+
+        if (!user) {
+            return res.status(404).send("user couldn't be created")
+        }
+        res.send({ success: "ok", status: 201, user })
+    } catch (err) {
+        res.status(500).json({ success: failed, error: err.message })
     }
-    res.send({ success: "ok", status: 201, user })
 });
 
 
 router.post('/login', async (req, res) => {
-    const user = await User.findOne({ email: req.body.email })
-    const secret = process.env.SECRET
 
-    if (!user) {
-        return res.status(400).json({ success: false, message: "user not found" })
+    try {
+        const user = await User.findOne({ email: req.body.email })
+        const secret = process.env.SECRET
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "user not found" })
+        }
+
+        if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
+            const token = jwt.sign(
+                { userId: user.id },
+                secret,
+                { expiresIn: '1d' }
+            )
+            return res.status(200).json({ success: true, user: user.email, token }) // token
+        }
+
+        return res.status(400).json({ success: false, message: "password incorrect" });
+    } catch (err) {
+        res.status(500).json({ success: failed, error: err.message })
     }
-
-    if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
-        const token = jwt.sign(
-            { userId: user.id },
-            secret,
-            { expiresIn: '1d' }
-        )
-        return res.status(200).json({ success: true, user: user.email, token }) // token
-    }
-
-    return res.status(400).json({ success: false, message: "password incorrect" });
 
 })
 
@@ -68,6 +79,13 @@ router.post('/register', async (req, res) => {
     if (!req.body.name || !req.body.email || !req.body.password) {
         return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
     }
+
+    const userExist = User.find({ email: req.body.email });
+
+    if (userExist) {
+        return res.status(401).json({ success: false, message: "user already exist" })
+    }
+
     let user = new User({
         passwordHash: bcrypt.hashSync(req.body.password, 10),
         ...req.body
@@ -78,7 +96,7 @@ router.post('/register', async (req, res) => {
     if (!user) {
         return res.status(404).send("user couldn't be created")
     }
-    res.send({ success: "ok", status: 201, user })
+    res.send({ success: "ok", status: 201, user: [user.email, user.name, user.phone] })
 })
 
 
