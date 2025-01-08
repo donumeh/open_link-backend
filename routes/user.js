@@ -81,27 +81,33 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
-    if (!req.body.name || !req.body.email || !req.body.password) {
-        return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
+
+    try {
+
+        if (!req.body.name || !req.body.email || !req.body.password) {
+            return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
+        }
+
+        const userExist = User.find({ email: req.body.email });
+
+        if (userExist) {
+            return res.status(409).json({ success: false, message: "user already exist" })
+        }
+
+        let user = new User({
+            passwordHash: bcrypt.hashSync(req.body.password, 10),
+            ...req.body
+        });
+
+        user = await user.save();
+
+        if (!user) {
+            return res.status(404).send("user couldn't be created")
+        }
+        return res.send({ success: "ok", status: 201, user: [user.email, user.name, user.phone] })
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "error while trying to register user" })
     }
-
-    const userExist = User.find({ email: req.body.email });
-
-    if (userExist) {
-        return res.status(409).json({ success: false, message: "user already exist" })
-    }
-
-    let user = new User({
-        passwordHash: bcrypt.hashSync(req.body.password, 10),
-        ...req.body
-    });
-
-    user = await user.save();
-
-    if (!user) {
-        return res.status(404).send("user couldn't be created")
-    }
-    res.send({ success: "ok", status: 201, user: [user.email, user.name, user.phone] })
 })
 
 
