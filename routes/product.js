@@ -82,15 +82,7 @@ router.post(`/`, async (req, res) => {
         return res.status(400).json({ success: false, message: "Invalid Brand" })
     }
     let product = new Product({
-        name: req.body.name,
-        description: req.body.description,
-        longDescription: req.body.longDescription,
-        image: req.body.image,
-        images: req.body.images,
-        price: req.body.price,
-        brand: req.body.brand,
-        stock: req.body.stock,
-        dateCreated: req.body.dateCreated
+        ...req.body
     })
     product = await product.save();
 
