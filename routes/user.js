@@ -108,7 +108,7 @@ router.post('/login', async (req, res) => {
                 secret,
                 { expiresIn: '1d' }
             )
-            return res.status(200).json({ success: true, user: [user.email, user.name], token }) // token
+            return res.status(200).json({ success: true, user, token }) // token
         }
 
         return res.status(400).json({ success: false, message: "password incorrect" });
