@@ -15,6 +15,9 @@ const jwt = require('./helpers/jwt');
 
 const errorHandler = require('./helpers/error-handler')
 
+
+const port = process.env.PORT || 3005
+
 app.use(cors());
 app.options('*', cors());
 
@@ -61,6 +64,6 @@ mongoose.connect(process.env.CONNECTION_STRING,
 
 
 
-app.listen(3005, () => {
-	console.log('server is running on localhost:3005');
+app.listen(port, () => {
+	console.log(`server is running on localhost:${port}`);
 })
