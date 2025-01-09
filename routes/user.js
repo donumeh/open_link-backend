@@ -5,6 +5,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const res = require('express/lib/response');
 const jwt = require('jsonwebtoken');
+const { sendWelcomeEmail } = require('../services/emailService');
 
 
 router.get(`/`, async (req, res) => {
@@ -86,6 +87,16 @@ router.post('/register', async (req, res) => {
         if (!user) {
             return res.status(404).send("user couldn't be created")
         }
+
+        // sending a welcome email
+        try {
+            sendWelcomeEmail(user.email, user.name);
+            res.status(201).json({ success: true, message: "Signup Successful. Welcom email sent"});
+        } catch (emailError) {
+            console.error("Error sending welcome email:", emailError);
+            res.status(500).json({ success: false, message: "User created, but failed to send email" });
+        }
+
         return res.send({ success: "ok", status: 201, user: { email: user.email, name: user.name, phone: user.phone } })
     } catch (error) {
         return res.status(500).json({ success: false, message: "error while trying to register user" })
