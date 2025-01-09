@@ -44,12 +44,14 @@ router.put('/:id', async (req, res) => {
         });
 
         const user = await User.findOneAndUpdate({ _id: userId }, updateData, { new: true });
+        console.log("Old user", user)
+        console.log("New user", updateData)
 
         if (!user) {
             res.status(404).json({ success: false, message: "user not found" })
         }
         else {
-            res.json({ success: true, user })
+            res.staus(201).json({ success: true, user })
         }
     } catch (err) {
         return res.status(500).json({ success: false, message: "The user was not found" })
