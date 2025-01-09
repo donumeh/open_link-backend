@@ -63,7 +63,8 @@ router.post('/register', async (req, res) => {
 
         let user = new User({
             passwordHash: bcrypt.hashSync(req.body.password, 10),
-            ...req.body
+            ...req.body,
+            email: req.body.email.toLowerCase()
         });
 
         user = await user.save();
@@ -86,7 +87,7 @@ router.post(`/`, async (req, res) => {
             return res.status(400).json({ success: false, message: "name, email, or password cannot be empty" })
         }
 
-        const userExist = await User.find({ email: req.body.email });
+        const userExist = await User.find({ email: req.body.email.toLowerCase() });
 
         if (userExist.length !== 0) {
             return res.status(409).json({ success: false, message: "user already exist" })
