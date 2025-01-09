@@ -128,7 +128,7 @@ router.post('/login', async (req, res) => {
         const secret = process.env.SECRET
 
         if (!user) {
-            return res.status(400).json({ success: false, message: "user not found" })
+            return res.status(400).json({ success: false, message: "User not found" })
         }
 
         if (user && bcrypt.compareSync(req.body.password, user.passwordHash)) {
@@ -140,7 +140,7 @@ router.post('/login', async (req, res) => {
             return res.status(200).json({ success: true, user, token }) // token
         }
 
-        return res.status(400).json({ success: false, message: "password incorrect" });
+        return res.status(400).json({ success: false, message: "Incorrect password" });
     } catch (err) {
         res.status(500).json({ success: failed, error: err.message })
     }
