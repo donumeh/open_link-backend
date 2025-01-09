@@ -35,6 +35,8 @@ router.put('/:id', async (req, res) => {
     try {
         const userId = req.params.id
         const updateData = { ...req.body };
+        console.log("Immediately: ", updateData)
+
 
         const allowedFields = ["name", "email"];
         Object.keys(updateData).forEach((field) => {
