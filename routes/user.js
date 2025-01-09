@@ -33,13 +33,23 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const body = req.body
-        const user = await User.findOneAndUpdate(req.params.id, {
-            ...body
-        })
+        const userId = req.params.id
+        const updateData = { ...req.body };
+
+        const allowedFields = ["name", "email"];
+        Object.keys(updateData).forEach((field) => {
+            if (!allowedFields.includes(field)) {
+                delete updateData[field];
+            }
+        });
+
+        const user = await User.findOneAndUpdate({ _id: userId }, updateData, { new: true });
 
         if (!user) {
-            res.status(500).json({ success: false, message: "The user was not found" })
+            res.status(404).json({ success: false, message: "user not found" })
+        }
+        else {
+            res.json({ success: true, user })
         }
     } catch (err) {
         return res.status(500).json({ success: false, message: "The user was not found" })
