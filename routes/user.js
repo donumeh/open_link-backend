@@ -33,8 +33,8 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const userId = req.params.id
-        const updateData = { ...req.body };
+        // const userId = req.params.id
+        // const updateData = { ...req.body };
         // console.log("Immediately: ", updateData)
 
 
@@ -45,12 +45,12 @@ router.put('/:id', async (req, res) => {
         //     }
         // });
 
-        const user = await User.findOneAndUpdate({ id: userId }, updateData, { new: true });
+        const user = await User.findByIdAndUpdate(req.params.id, { ...updateData }, { new: true });
         // console.log("Old user", user)
         // console.log("New user", updateData)
 
         if (!user) {
-            res.status(404).json({ success: false, message: "user not found" })
+            res.status(404).json({ success: false, message: "Update Error" })
         }
         else {
             res.staus(201).json({ success: true, user })
