@@ -31,6 +31,22 @@ router.get('/:id', async (req, res) => {
 });
 
 
+router.put('/:id', async (req, res) => {
+    try {
+        const body = req.body
+        const user = await User.findOneAndUpdate(req.params.id, {
+            ...body
+        })
+
+        if (!user) {
+            res.status(500).json({ success: false, message: "The user was not found" })
+        }
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "The user was not found" })
+    }
+});
+
+
 router.post('/register', async (req, res) => {
 
     try {

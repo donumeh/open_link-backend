@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema({
     country: {
         type: String,
         default: ''
+    },
+    avatar: {
+        type: String,
+        default: ''
     }
 })
 
