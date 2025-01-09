@@ -35,19 +35,19 @@ router.put('/:id', async (req, res) => {
     try {
         const userId = req.params.id
         const updateData = { ...req.body };
-        console.log("Immediately: ", updateData)
+        // console.log("Immediately: ", updateData)
 
 
-        const allowedFields = ["name", "email"];
-        Object.keys(updateData).forEach((field) => {
-            if (!allowedFields.includes(field)) {
-                delete updateData[field];
-            }
-        });
+        // const allowedFields = ["name", "email"];
+        // Object.keys(updateData).forEach((field) => {
+        //     if (!allowedFields.includes(field)) {
+        //         delete updateData[field];
+        //     }
+        // });
 
-        const user = await User.findOneAndUpdate({ _id: userId }, updateData, { new: true });
-        console.log("Old user", user)
-        console.log("New user", updateData)
+        const user = await User.findOneAndUpdate({ id: userId }, updateData, { new: true });
+        // console.log("Old user", user)
+        // console.log("New user", updateData)
 
         if (!user) {
             res.status(404).json({ success: false, message: "user not found" })
