@@ -22,9 +22,13 @@ const productSchema = mongoose.Schema({
         type: String
     }],
     brand: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Brand'
+        type: String,
+        default: ''
     },
+    // brand: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Brand'
+    // },
     price: {
         type: Number,
         default: 0
