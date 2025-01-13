@@ -34,21 +34,9 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        // const userId = req.params.id
         const updateData = { ...req.body };
-        // console.log("Immediately: ", updateData)
-
-
-        // const allowedFields = ["name", "email"];
-        // Object.keys(updateData).forEach((field) => {
-        //     if (!allowedFields.includes(field)) {
-        //         delete updateData[field];
-        //     }
-        // });
 
         const user = await User.findByIdAndUpdate(req.params.id, { ...updateData }, { new: true });
-        // console.log("Old user", user)
-        // console.log("New user", updateData)
 
         if (!user) {
             res.status(404).json({ success: false, message: "Update Error" })
@@ -91,7 +79,7 @@ router.post('/register', async (req, res) => {
         // sending a welcome email
         try {
             sendWelcomeEmail(user.email, user.name);
-            res.status(201).json({ success: true, message: "Signup Successful. Welcom email sent"});
+            res.status(201).json({ success: true, message: "Signup Successful. Welcom email sent" });
         } catch (emailError) {
             console.error("Error sending welcome email:", emailError);
             res.status(500).json({ success: false, message: "User created, but failed to send email" });
@@ -137,7 +125,7 @@ router.post(`/`, async (req, res) => {
 router.post('/login', async (req, res) => {
 
     try {
-        const user = await User.findOne({ email: req.body.email })
+        const user = await User.findOne({ email: req.body.email.toLowerCase() })
         const secret = process.env.SECRET
 
         if (!user) {
@@ -150,7 +138,7 @@ router.post('/login', async (req, res) => {
                 secret,
                 { expiresIn: '1d' }
             )
-            return res.status(200).json({ success: true, user, token }) // token
+            return res.status(200).json({ success: true, user, token })
         }
 
         return res.status(400).json({ success: false, message: "Incorrect password" });
