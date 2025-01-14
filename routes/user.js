@@ -35,8 +35,16 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const updateData = { ...req.body };
+        const constantValues = ["password", "passwordHash", "name", "token"]
 
-        const user = await User.findByIdAndUpdate(req.params.id, { ...updateData }, { new: true });
+        for (const value of constantValues) {
+            if (Object.keys(updateData).includes(value)) {
+                delete updateData[value]
+            }
+        }
+        const user = await User
+            .findByIdAndUpdate({ id: req.params.id }, { $set: { ...updateData } }, { new: true })
+            .select("-passwordHash");
 
         if (!user) {
             res.status(404).json({ success: false, message: "Update Error" })
@@ -125,7 +133,7 @@ router.post(`/`, async (req, res) => {
 router.post('/login', async (req, res) => {
 
     try {
-        const user = await User.findOne({ email: req.body.email.toLowerCase() })
+        const user = await User.findOne({ email: req.body.email.toLowerCase() }).select("-passwordHash");
         const secret = process.env.SECRET
 
         if (!user) {

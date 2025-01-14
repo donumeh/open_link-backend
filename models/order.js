@@ -6,14 +6,34 @@ const orderSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'OrderItem'
     },
-    shippingAddress1: String,
-    shippingAddress2: String,
-    city: String,
-    zip: String,
-    country: String,
-    phone: String,
-    status: String,
-    totalPrice: Number,
+    shippingAddress: {
+        type: String,
+        default: ""
+    },
+    city: {
+        type: String,
+        default: ""
+    },
+    zip: {
+        type: String,
+        default: ""
+    },
+    country: {
+        type: String,
+        default: ""
+    },
+    phone: {
+        type: String,
+        default: ""
+    },
+    status: {
+        type: String,
+        default: "pending"
+    },
+    totalPrice: {
+        type: Number,
+        default: ""
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
