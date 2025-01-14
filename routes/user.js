@@ -35,25 +35,28 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const updateData = { ...req.body };
-        const constantValues = ["password", "passwordHash", "name", "token"]
+        const constantValues = ["password", "passwordHash", "name", "token", "email"]
 
         for (const value of constantValues) {
             if (Object.keys(updateData).includes(value)) {
                 delete updateData[value]
             }
         }
+
+        console.log(updateData);
         const user = await User
-            .findByIdAndUpdate({ id: req.params.id }, { $set: { ...updateData } }, { new: true })
+            .findOneAndUpdate({ _id: req.params.id }, { $set: { ...updateData } }, { new: true })
             .select("-passwordHash");
 
+        console.log(user)
         if (!user) {
-            res.status(404).json({ success: false, message: "Update Error" })
+            res.status(404).json({ success: false, message: "user not found" })
         }
         else {
             res.status(201).json({ success: true, user })
         }
     } catch (err) {
-        return res.status(500).json({ success: false, message: "The user was not found" })
+        return res.status(500).json({ success: false, message: "An error occurred" })
     }
 });
 
@@ -87,7 +90,7 @@ router.post('/register', async (req, res) => {
         // sending a welcome email
         try {
             sendWelcomeEmail(user.email, user.name);
-            res.status(201).json({ success: true, message: "Signup Successful. Welcom email sent" });
+            res.status(201).json({ success: true, message: "Signup Successful. Welcome email sent" });
         } catch (emailError) {
             console.error("Error sending welcome email:", emailError);
             res.status(500).json({ success: false, message: "User created, but failed to send email" });
@@ -133,8 +136,10 @@ router.post(`/`, async (req, res) => {
 router.post('/login', async (req, res) => {
 
     try {
-        const user = await User.findOne({ email: req.body.email.toLowerCase() }).select("-passwordHash");
+        const user = await User.findOne({ email: req.body.email });
         const secret = process.env.SECRET
+
+        console.log(user)
 
         if (!user) {
             return res.status(400).json({ success: false, message: "User not found" })
@@ -144,14 +149,14 @@ router.post('/login', async (req, res) => {
             const token = jwt.sign(
                 { userId: user.id },
                 secret,
-                { expiresIn: '1d' }
+                { expiresIn: '5d' }
             )
             return res.status(200).json({ success: true, user, token })
         }
 
         return res.status(400).json({ success: false, message: "Incorrect password" });
     } catch (err) {
-        res.status(500).json({ success: failed, error: "An error ocurred. " })
+        res.status(500).json({ success: false, error: "An error ocurred. " })
     }
 
 })
