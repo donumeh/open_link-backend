@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
     try {
-        const updateData = { ...req.body };
+        const updateData = { ...JSON.parse(req.body) };
         const constantValues = ["password", "passwordHash", "name", "token", "email"]
 
         for (const value of constantValues) {

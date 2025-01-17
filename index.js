@@ -28,9 +28,6 @@ app.use(morgan('tiny'));
 app.use(jwt()); // logger middleware
 app.use(errorHandler)
 
-
-
-
 // Routers
 const productsRouter = require('./routes/product');
 const usersRouter = require('./routes/user')
