@@ -4,11 +4,13 @@ require('dotenv').config();
 // configure the transporter
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    secure: true,
+    host: 'smtp.gmail.com',
+    port: 465,
     auth: {
         user: process.env.USER_EMAIL,
         pass: process.env.EMAIL_PASS,
-    },
+    }
 });
 
 const sendWelcomeEmail = async (userEmail, userName) => {
