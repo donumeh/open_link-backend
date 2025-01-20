@@ -83,14 +83,17 @@ router.post('/register', async (req, res) => {
 
         user = await user.save();
 
+	// console.log("User was saved")
         if (!user) {
             return res.status(404).send("user couldn't be created")
         }
 
         // sending a welcome email
         try {
+		// console.log("Email about to be sent")
             sendWelcomeEmail(user.email, user.name);
-            res.status(201).json({ success: true, message: "Signup Successful. Welcome email sent" });
+		// console.log("Email sent");
+            // res.status(201).json({ success: true, message: "Signup Successful. Welcome email sent" });
         } catch (emailError) {
             console.error("Error sending welcome email:", emailError);
             res.status(500).json({ success: false, message: "User created, but failed to send email" });
