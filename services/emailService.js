@@ -1,8 +1,17 @@
-const brevo = require('./brevo');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+// configure the transporter
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.USER_EMAIL,
+        pass: process.env.EMAIL_PASS,
+    },
+});
 
 const sendWelcomeEmail = async (userEmail, userName) => {
-    const sender = { email: 'asapnino01@gmail.com', name: 'OpenLinks Team'};
-    const receivers = [{ email: userEmail }];
     const subject = "Welcome to OpenLinks 🎉";
     const htmlContent = `
         <h2>Hi ${userName}, welcome to OpenLinks!</h2>
@@ -11,8 +20,15 @@ const sendWelcomeEmail = async (userEmail, userName) => {
     <p><b>OpenLinks Team</b></p>
     `;
 
+    const mailOptions = {
+        from: 'OpenLinks Team <olungweonwisolomon@gmail.com>', // sender address
+        to: userEmail, // receiver address
+        subject, // subject line
+        html: htmlContent, // html body content
+    };
+
     try {
-        await brevo.sendTransacEmail({ sender, to: receivers, subject, htmlContent });
+        await transporter.sendMail(mailOptions);
         console.log(`Welcome email sent to ${userEmail}`);
     } catch (error) {
         console.error('Error sending welcome email:', error);
@@ -20,8 +36,6 @@ const sendWelcomeEmail = async (userEmail, userName) => {
 };
 
 const sendOrderConfirmationEmail = async (userEmail, orderId, orderTotal) => {
-    const sender = { email: 'asapnino01@gmail.com', name: 'OpenLinks Team'};
-    const receivers = [{ email: userEmail }];
     const subject = `Order Confirmation #${orderId}`;
 
     // format order total properly
@@ -41,8 +55,15 @@ const sendOrderConfirmationEmail = async (userEmail, orderId, orderTotal) => {
         <p><b>OpenLinks Team</b></p>
     `;
 
+    const mailOptions = {
+        from: 'Openlinks Team olungweonwisolomon@gmail.com',
+        to: userEmail,
+        subject,
+        html: htmlContent,
+    };
+
     try {
-        await brevo.sendTransacEmail({ sender, to: receivers, subject, htmlContent });
+        await transporter.sendMail(mailOptions);
         console.log(`Order confirmation email sent to ${userEmail}`);
     } catch (error) {
         console.error('Error sending order confirmation email:', error);
